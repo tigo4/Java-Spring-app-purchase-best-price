@@ -45,21 +45,29 @@ public class AsyncBuyingMachineTest {
         OrderResponse orderResponseB = new OrderResponse2015v1(2);
         Quote quoteC = new Quote2015v1(6, new BigDecimal(1.84));
         OrderResponse orderResponseC = new OrderResponse2015v1(6);
+
         Merchant merchantA = new VirtualMerchant(quoteA, orderResponseA);
         Merchant merchantB = new VirtualMerchant(quoteB, orderResponseB);
         Merchant merchantC = new VirtualMerchant(quoteC, orderResponseC);
+
         List<Merchant> merchants = new ArrayList<Merchant>();
         merchants.add(merchantA);
         merchants.add(merchantB);
         merchants.add(merchantC);
+
         BuyingMachine machine = new AsyncBuyingMachine(merchants);
         int purchased = machine.purchase(3);
+
         assertTrue(purchased == 3);
+
         merchants = machine.getMerchants();
+
         merchantA = merchants.get(0); 
         assertTrue(merchantA.quote().getQuantity() == 0);
+
         merchantB = merchants.get(1); 
         assertTrue(merchantB.quote().getQuantity() == 2);
+
         merchantC = merchants.get(2); 
         assertTrue(merchantC.quote().getQuantity() == 6);
 
