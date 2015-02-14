@@ -1,0 +1,2 @@
+Apache Maven 3.0.4
+$ mvn archetype:generate -DgroupId=best.purchase -DartifactId=purchase-best-price -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
