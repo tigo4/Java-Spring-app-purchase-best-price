@@ -4,7 +4,13 @@ import best.purchase.interfaces.*;
 import best.purchase.models.*;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 public class AsyncBuyingMachine implements BuyingMachine {
+
+    private static final Logger logger = LogManager.getLogger("AsyncBuyingMachine");
 
     List<Merchant> merchants;
 
@@ -30,6 +36,8 @@ public class AsyncBuyingMachine implements BuyingMachine {
             Quote quote = merchants.get(0).quote();
             order = new Order2015v1(quantity,quote); 
         } catch (Exception e) {
+            logger.error("error1 " + ExceptionUtils.getStackTrace(e));
+            e = null;
             return 0;
         }
 
@@ -37,6 +45,8 @@ public class AsyncBuyingMachine implements BuyingMachine {
             OrderResponse orderResponse = merchants.get(0).order(order);
             purchased = orderResponse.getQuantity();
         } catch (Exception e) {
+            logger.error("error2 " + ExceptionUtils.getStackTrace(e));
+            e = null;
             return 0;
         }
 
