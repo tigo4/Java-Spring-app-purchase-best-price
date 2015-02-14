@@ -6,7 +6,7 @@ public class OrderResponse2015v1 implements OrderResponse {
 
     private int quantity;
 
-    OrderResponse2015v1(int quantity) {
+    public OrderResponse2015v1(int quantity) {
         this.quantity = quantity;
     }
 
