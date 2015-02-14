@@ -8,7 +8,13 @@ import best.purchase.interfaces.*;
 import best.purchase.models.*;
 import java.math.BigDecimal;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 public class AsyncBuyingMachineTest {
+
+    private static final Logger logger = LogManager.getLogger("AsyncBuyingMachineTest");
 
     @Test
     public void helloTest() {
@@ -39,11 +45,11 @@ public class AsyncBuyingMachineTest {
     @Test
     public void purchaseAllFromOneMerchant() throws Exception {
 
-        Quote quoteA = new Quote2015v1(3, new BigDecimal(1.78));
+        Quote quoteA = new Quote2015v1(3, new BigDecimal("1.78"));
         OrderResponse orderResponseA = new OrderResponse2015v1(3);
-        Quote quoteB = new Quote2015v1(2, new BigDecimal(1.82));
+        Quote quoteB = new Quote2015v1(2, new BigDecimal("1.82"));
         OrderResponse orderResponseB = new OrderResponse2015v1(2);
-        Quote quoteC = new Quote2015v1(6, new BigDecimal(1.84));
+        Quote quoteC = new Quote2015v1(6, new BigDecimal("1.84"));
         OrderResponse orderResponseC = new OrderResponse2015v1(6);
 
         Merchant merchantA = new VirtualMerchant(quoteA, orderResponseA);
@@ -57,6 +63,7 @@ public class AsyncBuyingMachineTest {
 
         BuyingMachine machine = new AsyncBuyingMachine(merchants);
         int purchased = machine.purchase(3);
+        logger.info("===== purchased: " + purchased);
 
         assertTrue(purchased == 3);
 
