@@ -60,6 +60,8 @@ public class AsyncBuyingMachine implements BuyingMachine {
 
             remaining = quantity - purchased;
 
+            logger.info("remaining " + remaining);
+
             if (remaining == 0)
                 break;
 
@@ -78,6 +80,7 @@ public class AsyncBuyingMachine implements BuyingMachine {
                 orderResponse = merchant.order(order);
 
                 purchasedQuantity = orderResponse.getQuantity();
+                logger.info("purchasedQuantity " + purchasedQuantity);
                 purchased += purchasedQuantity;
 
             } catch (Exception e) {

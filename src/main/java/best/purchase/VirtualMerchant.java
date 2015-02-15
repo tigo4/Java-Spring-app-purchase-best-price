@@ -23,6 +23,7 @@ public class VirtualMerchant implements Merchant {
         // connect to merchant endpoint to order ...
         // just return injected constructor orderResponse for testing
         quote = new Quote2015v1(quote.getQuantity()-order.getQuantity(), quote.getPrice());
+        orderResponse = new OrderResponse2015v1(order.getQuantity());
         return orderResponse;
     }
 

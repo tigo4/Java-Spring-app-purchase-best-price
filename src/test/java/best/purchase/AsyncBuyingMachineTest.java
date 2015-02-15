@@ -20,6 +20,8 @@ public class AsyncBuyingMachineTest {
     @Test
     public void helloTest() {
 
+        logger.info("===== helloTest() ");
+
         AsyncBuyingMachine machine;
         int purchased;
 
@@ -50,6 +52,8 @@ public class AsyncBuyingMachineTest {
     @Before
     public void init() {
 
+        logger.info("===== init test ");
+
         quoteA = new Quote2015v1(3, new BigDecimal("1.78"));
         orderResponseA = new OrderResponse2015v1(3);
         quoteB = new Quote2015v1(2, new BigDecimal("1.82"));
@@ -71,6 +75,8 @@ public class AsyncBuyingMachineTest {
     @Test
     public void purchaseAllFromOneMerchant() throws Exception {
 
+        logger.info("===== purchaseAllFromOneMerchant() ");
+
         BuyingMachine machine = new AsyncBuyingMachine(merchants);
         int purchased = machine.purchase(3);
         logger.info("===== purchased: " + purchased);
@@ -91,17 +97,38 @@ public class AsyncBuyingMachineTest {
     }
 
     @Test
-    public void purchaseFromTwoMerchants() {
-        assertTrue(true);
+    public void purchaseFromTwoMerchants() throws Exception {
+
+        logger.info("===== purchaseFromTwoMerchants() ");
+
+        BuyingMachine machine = new AsyncBuyingMachine(merchants);
+        int purchased = machine.purchase(4);
+        logger.info("===== purchased: " + purchased);
+
+        assertTrue(purchased == 4);
+
+        merchants = machine.getMerchants();
+
+        merchantA = merchants.get(0);
+        assertTrue(merchantA.quote().getQuantity() == 0);
+
+        merchantB = merchants.get(1);
+        assertTrue(merchantB.quote().getQuantity() == 1);
+
+        merchantC = merchants.get(2);
+        assertTrue(merchantC.quote().getQuantity() == 6);
+
     }
 
     @Test
     public void simulateFailuresAndProceed() {
+        logger.info("===== simulateFailuresAndProceed() ");
         assertTrue(true);
     }
 
     @Test
     public void purchaseFromNoMerchantsAsAllFail() {
+        logger.info("===== purchaseFromNoMerchantsAsAllFail() ");
         assertTrue(true);
     }
 
