@@ -2,6 +2,7 @@ package best.purchase;
 
 import org.junit.Test;
 import org.junit.Before;
+import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 import java.util.List;
 import java.util.ArrayList;
@@ -17,27 +18,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.ApplicationContext;
 
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.ContextConfiguration;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={"classpath:applicationContext.xml"})
 public class AsyncBuyingMachineTest {
 
     private static final Logger logger = LogManager.getLogger("AsyncBuyingMachineTest");
 
     ApplicationContext applicationContext = new ClassPathXmlApplicationContext("/applicationContext.xml");
 
+    @Autowired(required = true)
+    private BuyingMachine machine;
+
     @Test
     public void helloTest() {
 
         logger.info("===== helloTest() ");
 
-        AsyncBuyingMachine machine;
-        int purchased;
-
         // null merchants
-        machine = new AsyncBuyingMachine(null);
-        purchased = machine.purchase(11);
+        machine.init(null);
+        int purchased = machine.purchase(11);
         assertTrue(purchased == 0);
 
         // merchants size = 0
-        machine = new AsyncBuyingMachine(new ArrayList<Merchant>());
+        machine.init(new ArrayList<Merchant>());
         purchased = machine.purchase(11);
         assertTrue(purchased == 0);
 
@@ -45,7 +51,7 @@ public class AsyncBuyingMachineTest {
         Merchant merchant = new VirtualMerchant(null);
         List<Merchant> merchants = new ArrayList<Merchant>();
         merchants.add(merchant);
-        machine = new AsyncBuyingMachine(merchants);
+        machine.init(merchants);
         purchased = machine.purchase(0);
         assertTrue(purchased == 0);
 
@@ -76,7 +82,7 @@ public class AsyncBuyingMachineTest {
 
         logger.info("===== purchaseAllFromOneMerchant() ");
 
-        BuyingMachine machine = new AsyncBuyingMachine(merchants);
+        machine.init(merchants);
         int purchased = machine.purchase(3);
         logger.info("===== purchased: " + purchased);
 
@@ -100,7 +106,7 @@ public class AsyncBuyingMachineTest {
 
         logger.info("===== purchaseFromTwoMerchants() ");
 
-        BuyingMachine machine = new AsyncBuyingMachine(merchants);
+        machine.init(merchants);
         int purchased = machine.purchase(4);
         logger.info("===== purchased: " + purchased);
 
@@ -124,9 +130,7 @@ public class AsyncBuyingMachineTest {
 
         logger.info("===== simulateFailuresAndProceed() ");
 
-        BuyingMachine machine = new AsyncBuyingMachine(merchants);
-        machine.setSimulateQuoteFail(2);
-        machine.setSimulateOrderFail(1);
+        machine.init(merchants, 2, 1);
         int purchased = machine.purchase(4);
         logger.info("===== purchased: " + purchased);
 

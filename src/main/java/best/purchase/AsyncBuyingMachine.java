@@ -17,26 +17,34 @@ public class AsyncBuyingMachine implements BuyingMachine {
     private static final Logger logger = LogManager.getLogger("AsyncBuyingMachine");
 
     List<Merchant> merchants;
+    int failQuoteAt;
+    int failOrderAt;
 
-    AsyncBuyingMachine(List<Merchant> merchants) {
+    boolean initialized = false;
+    public void init(List<Merchant> merchants) {
         this.merchants = merchants;
+        this.failQuoteAt = 0;
+        this.failOrderAt = 0;
+        initialized = true;
+    }
+    public void init(List<Merchant> merchants, int failQuoteAt, int failOrderAt) {
+        this.merchants = merchants;
+        this.failQuoteAt = failQuoteAt;
+        this.failOrderAt = failOrderAt;
+        initialized = true;
     }
 
     public List<Merchant> getMerchants() {
         return merchants;
     }
 
-    int failQuoteAt = 0;
-    public void setSimulateQuoteFail(int failQuoteAt) {
-        this.failQuoteAt = failQuoteAt;
-    }
-
-    int failOrderAt = 0;
-    public void setSimulateOrderFail(int failOrderAt) {
-        this.failOrderAt = failOrderAt;
-    }
-
     public int purchase(int quantity) {
+
+        if (!initialized) {
+            logger.error("machine not initialized");
+            return 0;
+        }
+        initialized = false;
 
         int purchased = 0;
 
