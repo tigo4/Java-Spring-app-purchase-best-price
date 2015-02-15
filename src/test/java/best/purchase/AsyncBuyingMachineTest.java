@@ -60,13 +60,9 @@ public class AsyncBuyingMachineTest {
 
         logger.info("===== init test ");
 
-        quoteA = (Quote2015v1) applicationContext.getBean("quoteA");
-        quoteB = (Quote2015v1) applicationContext.getBean("quoteB");
-        quoteC = (Quote2015v1) applicationContext.getBean("quoteC");
-
-        merchantA = new VirtualMerchant(quoteA);
-        merchantB = new VirtualMerchant(quoteB);
-        merchantC = new VirtualMerchant(quoteC);
+        merchantA = (VirtualMerchant) applicationContext.getBean("merchantA");
+        merchantB = (VirtualMerchant) applicationContext.getBean("merchantB");
+        merchantC = (VirtualMerchant) applicationContext.getBean("merchantC");
 
         merchants = new ArrayList<Merchant>();
         merchants.add(merchantA);

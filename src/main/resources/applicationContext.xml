@@ -27,5 +27,15 @@
         <constructor-arg><ref bean="bigDecimalC"/></constructor-arg>
     </bean>
 
+    <bean id="merchantA" class="best.purchase.VirtualMerchant" scope="prototype">
+        <constructor-arg><ref bean="quoteA"/></constructor-arg>
+    </bean>
+    <bean id="merchantB" class="best.purchase.VirtualMerchant" scope="prototype">
+        <constructor-arg><ref bean="quoteB"/></constructor-arg>
+    </bean>
+    <bean id="merchantC" class="best.purchase.VirtualMerchant" scope="prototype">
+        <constructor-arg><ref bean="quoteC"/></constructor-arg>
+    </bean>
+
 </beans>
 
