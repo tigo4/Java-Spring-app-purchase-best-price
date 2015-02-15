@@ -13,9 +13,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.ApplicationContext;
+
 public class AsyncBuyingMachineTest {
 
     private static final Logger logger = LogManager.getLogger("AsyncBuyingMachineTest");
+
+    ApplicationContext applicationContext = new ClassPathXmlApplicationContext("/applicationContext.xml");
 
     @Test
     public void helloTest() {
@@ -36,7 +42,7 @@ public class AsyncBuyingMachineTest {
         assertTrue(purchased == 0);
 
         // quantity = 0
-        Merchant merchant = new VirtualMerchant(null, null);
+        Merchant merchant = new VirtualMerchant(null);
         List<Merchant> merchants = new ArrayList<Merchant>();
         merchants.add(merchant);
         machine = new AsyncBuyingMachine(merchants);
@@ -46,24 +52,21 @@ public class AsyncBuyingMachineTest {
     }
 
     Quote quoteA, quoteB, quoteC;
-    OrderResponse orderResponseA, orderResponseB, orderResponseC;
     Merchant merchantA, merchantB, merchantC;
     List<Merchant> merchants;
+
     @Before
     public void init() {
 
         logger.info("===== init test ");
 
-        quoteA = new Quote2015v1(3, new BigDecimal("1.78"));
-        orderResponseA = new OrderResponse2015v1(3);
-        quoteB = new Quote2015v1(2, new BigDecimal("1.82"));
-        orderResponseB = new OrderResponse2015v1(2);
-        quoteC = new Quote2015v1(6, new BigDecimal("1.84"));
-        orderResponseC = new OrderResponse2015v1(6);
+        quoteA = (Quote2015v1) applicationContext.getBean("quoteA");
+        quoteB = (Quote2015v1) applicationContext.getBean("quoteB");
+        quoteC = (Quote2015v1) applicationContext.getBean("quoteC");
 
-        merchantA = new VirtualMerchant(quoteA, orderResponseA);
-        merchantB = new VirtualMerchant(quoteB, orderResponseB);
-        merchantC = new VirtualMerchant(quoteC, orderResponseC);
+        merchantA = new VirtualMerchant(quoteA);
+        merchantB = new VirtualMerchant(quoteB);
+        merchantC = new VirtualMerchant(quoteC);
 
         merchants = new ArrayList<Merchant>();
         merchants.add(merchantA);

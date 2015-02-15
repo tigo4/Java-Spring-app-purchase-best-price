@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="bigDecimalA" class="java.math.BigDecimal">
+        <constructor-arg type="java.lang.String"><value>1.78</value></constructor-arg>
+    </bean>
+    <bean id="quoteA" class="best.purchase.models.Quote2015v1" scope="prototype">
+        <constructor-arg type="int"><value>3</value></constructor-arg>
+        <constructor-arg><ref bean="bigDecimalA"/></constructor-arg>
+    </bean>
+
+    <bean id="bigDecimalB" class="java.math.BigDecimal">
+        <constructor-arg type="java.lang.String"><value>1.82</value></constructor-arg>
+    </bean>
+    <bean id="quoteB" class="best.purchase.models.Quote2015v1" scope="prototype">
+        <constructor-arg type="int"><value>2</value></constructor-arg>
+        <constructor-arg><ref bean="bigDecimalB"/></constructor-arg>
+    </bean>
+
+    <bean id="bigDecimalC" class="java.math.BigDecimal">
+        <constructor-arg type="java.lang.String"><value>1.84</value></constructor-arg>
+    </bean>
+    <bean id="quoteC" class="best.purchase.models.Quote2015v1" scope="prototype">
+        <constructor-arg type="int"><value>6</value></constructor-arg>
+        <constructor-arg><ref bean="bigDecimalC"/></constructor-arg>
+    </bean>
+
+</beans>
+

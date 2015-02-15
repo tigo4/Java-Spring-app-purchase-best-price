@@ -8,9 +8,8 @@ public class VirtualMerchant implements Merchant {
     private Quote quote;
     private OrderResponse orderResponse;
 
-    VirtualMerchant(Quote quote, OrderResponse orderResponse) {
+    VirtualMerchant(Quote quote) {
         this.quote = quote;
-        this.orderResponse = orderResponse;
     }
 
     public Quote quote() throws Exception {
