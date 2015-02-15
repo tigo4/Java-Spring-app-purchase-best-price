@@ -8,5 +8,9 @@ public interface BuyingMachine {
 
     List<Merchant> getMerchants();
 
+    void setSimulateQuoteFail(int failQuoteAt);
+
+    void setSimulateOrderFail(int failOrderAt);
+
 }
 

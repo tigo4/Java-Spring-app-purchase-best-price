@@ -26,6 +26,16 @@ public class AsyncBuyingMachine implements BuyingMachine {
         return merchants;
     }
 
+    int failQuoteAt = 0;
+    public void setSimulateQuoteFail(int failQuoteAt) {
+        this.failQuoteAt = failQuoteAt;
+    }
+
+    int failOrderAt = 0;
+    public void setSimulateOrderFail(int failOrderAt) {
+        this.failOrderAt = failOrderAt;
+    }
+
     public int purchase(int quantity) {
 
         int purchased = 0;
@@ -33,10 +43,17 @@ public class AsyncBuyingMachine implements BuyingMachine {
         if (quantity == 0 || merchants == null || merchants.size() == 0) return 0;
         Quote quote;
         Map<Merchant,Quote> map = new HashMap<Merchant,Quote>();
+        int quoteCount = 0;
         // to be done in paralell ...
         for (Merchant merchant : merchants) {
 
+            quoteCount++;
+
             try {
+                if (quoteCount == failQuoteAt) {
+                    failQuoteAt = 0;
+                    throw new Exception("quote exception simulation");
+                }
                 quote = merchant.quote();
                 map.put(merchant, quote);
             } catch (Exception e) {
@@ -56,7 +73,10 @@ public class AsyncBuyingMachine implements BuyingMachine {
         int remaining;
         int orderQuantity;
         int purchasedQuantity = 0;
+        int orderCount = 0;
         for (Merchant merchant : sortedMap.keySet()) {
+
+            orderCount++;
 
             remaining = quantity - purchased;
 
@@ -77,6 +97,10 @@ public class AsyncBuyingMachine implements BuyingMachine {
                 logger.info("buying " + orderQuantity + " at price " + quote.getPrice());
 
                 order = new Order2015v1(orderQuantity, quote); 
+                if (orderCount == failOrderAt) {
+                    failOrderAt = 0;
+                    throw new Exception("order exception simulation");
+                }
                 orderResponse = merchant.order(order);
 
                 purchasedQuantity = orderResponse.getQuantity();
