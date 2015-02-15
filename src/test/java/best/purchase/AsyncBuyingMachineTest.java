@@ -1,6 +1,7 @@
 package best.purchase;
 
 import org.junit.Test;
+import org.junit.Before;
 import static org.junit.Assert.*;
 import java.util.List;
 import java.util.ArrayList;
@@ -42,24 +43,33 @@ public class AsyncBuyingMachineTest {
 
     }
 
-    @Test
-    public void purchaseAllFromOneMerchant() throws Exception {
+    Quote quoteA, quoteB, quoteC;
+    OrderResponse orderResponseA, orderResponseB, orderResponseC;
+    Merchant merchantA, merchantB, merchantC;
+    List<Merchant> merchants;
+    @Before
+    public void init() {
 
-        Quote quoteA = new Quote2015v1(3, new BigDecimal("1.78"));
-        OrderResponse orderResponseA = new OrderResponse2015v1(3);
-        Quote quoteB = new Quote2015v1(2, new BigDecimal("1.82"));
-        OrderResponse orderResponseB = new OrderResponse2015v1(2);
-        Quote quoteC = new Quote2015v1(6, new BigDecimal("1.84"));
-        OrderResponse orderResponseC = new OrderResponse2015v1(6);
+        quoteA = new Quote2015v1(3, new BigDecimal("1.78"));
+        orderResponseA = new OrderResponse2015v1(3);
+        quoteB = new Quote2015v1(2, new BigDecimal("1.82"));
+        orderResponseB = new OrderResponse2015v1(2);
+        quoteC = new Quote2015v1(6, new BigDecimal("1.84"));
+        orderResponseC = new OrderResponse2015v1(6);
 
-        Merchant merchantA = new VirtualMerchant(quoteA, orderResponseA);
-        Merchant merchantB = new VirtualMerchant(quoteB, orderResponseB);
-        Merchant merchantC = new VirtualMerchant(quoteC, orderResponseC);
+        merchantA = new VirtualMerchant(quoteA, orderResponseA);
+        merchantB = new VirtualMerchant(quoteB, orderResponseB);
+        merchantC = new VirtualMerchant(quoteC, orderResponseC);
 
-        List<Merchant> merchants = new ArrayList<Merchant>();
+        merchants = new ArrayList<Merchant>();
         merchants.add(merchantA);
         merchants.add(merchantB);
         merchants.add(merchantC);
+
+    }
+
+    @Test
+    public void purchaseAllFromOneMerchant() throws Exception {
 
         BuyingMachine machine = new AsyncBuyingMachine(merchants);
         int purchased = machine.purchase(3);
