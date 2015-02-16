@@ -19,18 +19,24 @@ public class AsyncBuyingMachine implements BuyingMachine {
     List<Merchant> merchants;
     int failQuoteAt;
     int failOrderAt;
+    boolean failAllOrders;
 
-    boolean initialized = false;
     public void init(List<Merchant> merchants) {
-        this.merchants = merchants;
-        this.failQuoteAt = 0;
-        this.failOrderAt = 0;
-        initialized = true;
+        centralInit(merchants, 0, 0, false);
     }
     public void init(List<Merchant> merchants, int failQuoteAt, int failOrderAt) {
+        centralInit(merchants, failQuoteAt, failOrderAt, false);
+    }
+    public void init(List<Merchant> merchants, boolean failAllOrders) {
+        centralInit(merchants, 0, 0, failAllOrders);
+    }
+
+    boolean initialized = false;
+    private void centralInit(List<Merchant> merchants, int failQuoteAt, int failOrderAt, boolean failAllOrders) {
         this.merchants = merchants;
         this.failQuoteAt = failQuoteAt;
         this.failOrderAt = failOrderAt;
+        this.failAllOrders = failAllOrders;
         initialized = true;
     }
 
@@ -105,6 +111,8 @@ public class AsyncBuyingMachine implements BuyingMachine {
                 logger.info("buying " + orderQuantity + " at price " + quote.getPrice());
 
                 order = new Order2015v1(orderQuantity, quote); 
+                if (failAllOrders)
+                    throw new Exception("fail all orders exception simulation");
                 if (orderCount == failOrderAt) {
                     failOrderAt = 0;
                     throw new Exception("order exception simulation");

@@ -150,9 +150,26 @@ public class AsyncBuyingMachineTest {
     }
 
     @Test
-    public void purchaseFromNoMerchantsAsAllFail() {
+    public void purchaseFromNoMerchantsAsAllFail() throws Exception {
         logger.info("===== purchaseFromNoMerchantsAsAllFail() ");
-        assertTrue(true);
+
+        machine.init(merchants, true);
+        int purchased = machine.purchase(4);
+        logger.info("===== purchased: " + purchased);
+
+        assertTrue(purchased == 0);
+
+        merchants = machine.getMerchants();
+
+        merchantA = merchants.get(0);
+        assertTrue(merchantA.quote().getQuantity() == 3);
+
+        merchantB = merchants.get(1);
+        assertTrue(merchantB.quote().getQuantity() == 2);
+
+        merchantC = merchants.get(2);
+        assertTrue(merchantC.quote().getQuantity() == 6);
+
     }
 
 }

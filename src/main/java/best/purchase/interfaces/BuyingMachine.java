@@ -10,6 +10,8 @@ public interface BuyingMachine {
 
     void init(List<Merchant> merchants, int failQuoteAt, int failOrderAt);
 
+    void init(List<Merchant> merchants, boolean failAllOrders);
+
     List<Merchant> getMerchants();
 
 }
