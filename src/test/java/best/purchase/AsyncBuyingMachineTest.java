@@ -130,22 +130,13 @@ public class AsyncBuyingMachineTest {
 
         logger.info("===== simulateFailuresAndProceed() ");
 
-        machine.init(merchants, 2, 1);
+        machine.init(merchants, true, 1);
         int purchased = machine.purchase(4);
         logger.info("===== purchased: " + purchased);
 
         assertTrue(purchased == 4);
 
         merchants = machine.getMerchants();
-
-        merchantA = merchants.get(0);
-        assertTrue(merchantA.quote().getQuantity() == 3);
-
-        merchantB = merchants.get(1);
-        assertTrue(merchantB.quote().getQuantity() == 2);
-
-        merchantC = merchants.get(2);
-        assertTrue(merchantC.quote().getQuantity() == 2);
 
     }
 

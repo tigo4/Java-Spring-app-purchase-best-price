@@ -3,6 +3,7 @@ package best.purchase;
 import best.purchase.interfaces.*;
 import best.purchase.models.*;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,29 +13,35 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 public class AsyncBuyingMachine implements BuyingMachine {
 
     private static final Logger logger = LogManager.getLogger("AsyncBuyingMachine");
 
     List<Merchant> merchants;
-    int failQuoteAt;
+    boolean failQuote;
     int failOrderAt;
     boolean failAllOrders;
 
     public void init(List<Merchant> merchants) {
-        centralInit(merchants, 0, 0, false);
+        centralInit(merchants, false, 0, false);
     }
-    public void init(List<Merchant> merchants, int failQuoteAt, int failOrderAt) {
-        centralInit(merchants, failQuoteAt, failOrderAt, false);
+    public void init(List<Merchant> merchants, boolean failQuote, int failOrderAt) {
+        centralInit(merchants, failQuote, failOrderAt, false);
     }
     public void init(List<Merchant> merchants, boolean failAllOrders) {
-        centralInit(merchants, 0, 0, failAllOrders);
+        centralInit(merchants, false, 0, failAllOrders);
     }
 
     boolean initialized = false;
-    private void centralInit(List<Merchant> merchants, int failQuoteAt, int failOrderAt, boolean failAllOrders) {
+    private void centralInit(List<Merchant> merchants, boolean failQuote, int failOrderAt, boolean failAllOrders) {
         this.merchants = merchants;
-        this.failQuoteAt = failQuoteAt;
+        this.failQuote = failQuote;
         this.failOrderAt = failOrderAt;
         this.failAllOrders = failAllOrders;
         initialized = true;
@@ -55,33 +62,58 @@ public class AsyncBuyingMachine implements BuyingMachine {
         int purchased = 0;
 
         if (quantity == 0 || merchants == null || merchants.size() == 0) return 0;
-        Quote quote;
         Map<Merchant,Quote> map = new HashMap<Merchant,Quote>();
-        int quoteCount = 0;
-        // to be done in paralell ...
-        for (Merchant merchant : merchants) {
+        // done in paralell ...
+        List<Future<Map<Merchant,Quote>>> futures = new ArrayList<Future<Map<Merchant,Quote>>>();
+        ExecutorService executor = Executors.newFixedThreadPool(3);
+        for (final Merchant merchant : merchants) {
 
-            quoteCount++;
+            Callable<Map<Merchant,Quote>> worker = new Callable<Map<Merchant,Quote>>() {
+                @Override
+                public Map<Merchant,Quote> call() throws Exception {
 
-            try {
-                if (quoteCount == failQuoteAt) {
-                    failQuoteAt = 0;
-                    throw new Exception("quote exception simulation");
+                    try {
+                        synchronized (this) {
+                            if (failQuote) {
+                                failQuote = false;
+                                throw new Exception("quote exception simulation");
+                            }
+                        }
+                        Map<Merchant,Quote> threadMap = new HashMap<Merchant,Quote>();
+                        Quote quote = merchant.quote();
+                        threadMap.put(merchant, quote);
+                        return threadMap;
+                    } catch (Exception e) {
+                        logger.error("thred error1 " + ExceptionUtils.getStackTrace(e));
+                        throw e;
+                    }
+
                 }
-                quote = merchant.quote();
-                map.put(merchant, quote);
-            } catch (Exception e) {
-                logger.error("error1 " + ExceptionUtils.getStackTrace(e));
-                e = null;
-                continue;
-            }
+            };
+            Future<Map<Merchant,Quote>> submit = executor.submit(worker);
+            futures.add(submit);
 
+        }
+
+        executor.shutdown();
+        // wait
+        while (!executor.isTerminated()) {}
+
+        for (Future<Map<Merchant,Quote>> future : futures) {
+            try {
+                map.putAll(future.get());
+            } catch (InterruptedException e) {
+                logger.error("future error1 " + ExceptionUtils.getStackTrace(e));
+            } catch (ExecutionException e) {
+                logger.error("future error1 " + ExceptionUtils.getStackTrace(e));
+            }
         }
 
         // sort map by quote price
         Map<Merchant,Quote> sortedMap = new TreeMap<Merchant,Quote>(new CustomComparator(map));
         sortedMap.putAll(map);
 
+        Quote quote;
         Order order;
         OrderResponse orderResponse;
         int remaining;

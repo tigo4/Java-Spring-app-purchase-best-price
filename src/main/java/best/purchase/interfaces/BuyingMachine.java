@@ -8,7 +8,7 @@ public interface BuyingMachine {
 
     void init(List<Merchant> merchants);
 
-    void init(List<Merchant> merchants, int failQuoteAt, int failOrderAt);
+    void init(List<Merchant> merchants, boolean failQuote, int failOrderAt);
 
     void init(List<Merchant> merchants, boolean failAllOrders);
 
